@@ -1,4 +1,4 @@
-package com.everyones_coupon.everyones_coupon;
+package com.everyones_coupon;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
