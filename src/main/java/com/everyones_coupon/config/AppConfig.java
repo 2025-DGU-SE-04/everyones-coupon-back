@@ -1,4 +1,4 @@
-package com.everyones_coupon.everyones_coupon.config;
+package com.everyones_coupon.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
