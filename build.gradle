@@ -38,6 +38,7 @@ dependencies {
 
     // H2 Database (개발 및 테스트용 인메모리 DB)
     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'org.postgresql:postgresql:'
 
     // lombok (컴파일 시, 애노테이션 처리용)
     compileOnly 'org.projectlombok:lombok'
