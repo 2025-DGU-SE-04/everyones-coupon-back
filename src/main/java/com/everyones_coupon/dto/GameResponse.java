@@ -12,7 +12,7 @@ public class GameResponse {
     private int couponCount;        // 현재 등록된 쿠폰 개수
     private String category;
 
-    // Entity -> DTO 변환 생성자
+    // Entity -> DTO 변환 생성자 
     public GameResponse(Game game) {
         this.id = game.getId();
         this.title = game.getTitle();

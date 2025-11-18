@@ -16,6 +16,6 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     // 게임 추가 시: 이름 중복 검사
     boolean existsByTitle(String title);
     
-    // 게임 상세 진입 시 이름으로 조회
+    // 게임 상세 진입 시 이름으로 조회 
     Optional<Game> findByTitle(String title);
 }

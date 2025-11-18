@@ -44,4 +44,4 @@ public class Game extends BaseTimeEntity {
     public void increaseCouponCount() {
         this.couponCount++;
     }
-}
+} 
