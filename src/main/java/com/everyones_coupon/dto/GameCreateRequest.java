@@ -19,7 +19,7 @@ public class GameCreateRequest {
 
     private String category;
 
-    // DTO -> Entity 변환 메서드 
+    // DTO -> Entity 변환 메서드
     public Game toEntity() {
         return Game.builder()
                 .title(this.title)

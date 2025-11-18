@@ -44,7 +44,7 @@ public class GameService {
     
     /*
     게임 검색 기능
-    검색어가 포함된 게임 목록 반환 
+    검색어가 포함된 게임 목록 반환
     */
     @Transactional(readOnly = true)
     public List<Game> searchGames(String keyword) {

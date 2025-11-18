@@ -30,7 +30,7 @@ public class GameController {
         return ResponseEntity.ok(games);
     }
 
-    // 게임 검색 API (GET /api/games/search?keyword=게임명) 
+    // 게임 검색 API (GET /api/games/search?keyword=게임명)
     @GetMapping("/search")
     public ResponseEntity<List<Game>> searchGames(@RequestParam("keyword") String keyword) {
         List<Game> games = gameService.searchGames(keyword);
