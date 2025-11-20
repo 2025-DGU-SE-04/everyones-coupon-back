@@ -3,9 +3,6 @@ package com.everyones_coupon.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,10 +25,6 @@ public class Game extends BaseTimeEntity {
 
     private int couponCount;
     private int viewCount;
-
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Coupon> coupons = new ArrayList<>();
 
     public void markOfficial() {
         this.official = true;

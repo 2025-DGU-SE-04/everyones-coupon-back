@@ -6,8 +6,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -43,10 +41,6 @@ public class Coupon extends BaseTimeEntity {
     private double score;
     private int likeCount;
     private int dislikeCount;
-
-    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Feedback> feedbacks = new ArrayList<>();
 
     // --- 비즈니스 로직 ---
 
