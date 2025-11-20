@@ -2,6 +2,8 @@ package com.everyones_coupon.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ public class Coupon extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Game game;
 
     @Column(nullable = false)
@@ -41,7 +44,7 @@ public class Coupon extends BaseTimeEntity {
     private int likeCount;
     private int dislikeCount;
 
-    @OneToMany(mappedBy = "coupon")
+    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Feedback> feedbacks = new ArrayList<>();
 

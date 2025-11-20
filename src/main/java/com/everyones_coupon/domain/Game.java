@@ -29,7 +29,7 @@ public class Game extends BaseTimeEntity {
     private int couponCount;
     private int viewCount;
 
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Coupon> coupons = new ArrayList<>();
 

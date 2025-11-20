@@ -2,6 +2,8 @@ package com.everyones_coupon.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -16,6 +18,7 @@ public class Feedback extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Coupon coupon;
 
     private String ipAddress;
