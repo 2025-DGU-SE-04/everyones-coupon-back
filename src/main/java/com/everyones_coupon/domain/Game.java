@@ -8,6 +8,10 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Table(name = "games", indexes = {
+    @Index(name = "idx_game_title", columnList = "title"),
+    @Index(name = "idx_game_view_count", columnList = "viewCount")
+})
 public class Game extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

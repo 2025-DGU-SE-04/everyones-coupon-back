@@ -12,7 +12,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(name = "coupons")
+@Table(name = "coupons", indexes = {
+    @Index(name = "idx_coupon_game_id", columnList = "game_id"),
+    @Index(name = "idx_coupon_score", columnList = "score"),
+    @Index(name = "idx_coupon_created_at", columnList = "createdAt")
+})
 public class Coupon extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +27,7 @@ public class Coupon extends BaseTimeEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Game game;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String code;
 
     @Column(nullable = false)
