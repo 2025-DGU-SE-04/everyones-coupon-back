@@ -29,17 +29,23 @@ public class Coupon extends BaseTimeEntity {
     @Column(nullable = false)
     private String reward;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = true)
     private String detail;
 
+    @Column(nullable = true)
     private LocalDateTime expirationDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CouponStatusEnum status;
 
+    @Column(nullable = false)
     private double score;
+
+    @Column(nullable = false)
     private int likeCount;
+
+    @Column(nullable = false)
     private int dislikeCount;
 
     // --- 비즈니스 로직 ---

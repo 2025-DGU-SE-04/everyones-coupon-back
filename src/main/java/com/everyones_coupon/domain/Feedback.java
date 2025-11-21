@@ -21,6 +21,7 @@ public class Feedback extends BaseTimeEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Coupon coupon;
 
+    @Column(nullable = true)
     private String ipAddress;
 
     @Enumerated(EnumType.STRING)

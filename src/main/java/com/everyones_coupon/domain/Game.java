@@ -16,14 +16,25 @@ public class Game extends BaseTimeEntity {
     @Column(nullable = false)
     private String title;
 
+    @Column(columnDefinition = "TEXT", nullable = true)
     private String gameDescription;
+
+    @Column(nullable = true)
     private String couponUsageLink;
+
+    @Column(nullable = true)
     private String category;
 
+    @Column(nullable = false)
     private boolean official;
+
+    @Column(nullable = true)
     private String gameImageUrl;
 
+    @Column(nullable = false)
     private int couponCount;
+
+    @Column(nullable = false)
     private int viewCount;
 
     public void markOfficial() {
