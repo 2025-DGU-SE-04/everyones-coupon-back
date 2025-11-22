@@ -59,6 +59,13 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_116677D89A3143A7BEE50CF7CFBAD8DC }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_258C841151394564B6E7B0DAA485CC04 }}
 
+      - name: Debug artifact files
+        run: |
+          echo "=== WORKSPACE ==="
+          pwd
+          echo "=== FILE LIST ==="
+          ls -R .
+      
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -68,6 +75,7 @@ jobs:
           package: ./java-app/*.jar
 
           
+
 
 
 
