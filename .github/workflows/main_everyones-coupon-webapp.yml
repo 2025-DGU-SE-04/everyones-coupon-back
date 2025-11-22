@@ -65,9 +65,10 @@ jobs:
         with:
           app-name: 'everyones-coupon-webapp'
           slot-name: 'Production'
-          package: ./java-app/build/libs/*.jar
+          package: ./java-app/*.jar
 
           
+
 
 
 
