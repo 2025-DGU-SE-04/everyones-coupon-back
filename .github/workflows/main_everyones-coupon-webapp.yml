@@ -58,13 +58,6 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_86AE69D655DD49A4B5BCFE58A0587659 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_116677D89A3143A7BEE50CF7CFBAD8DC }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_258C841151394564B6E7B0DAA485CC04 }}
-
-      - name: Debug artifact files
-        run: |
-          echo "=== WORKSPACE ==="
-          pwd
-          echo "=== FILE LIST ==="
-          ls -R .
       
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -72,9 +65,10 @@ jobs:
         with:
           app-name: 'everyones-coupon-webapp'
           slot-name: 'Production'
-          package: ./java-app/*.jar
+          package: ./java-app
 
           
+
 
 
 
