@@ -10,7 +10,14 @@ import org.hibernate.annotations.OnDeleteAction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(name = "feedbacks")
+@Table(name = "feedbacks", uniqueConstraints = {
+    // 한 쿠폰(coupon_id)에 대해 같은 IP(ip_address)는 단 하나의 피드백만 남길 수 있음
+    @UniqueConstraint(
+        name = "uk_feedback_coupon_ip", 
+        columnNames = {"coupon_id", "ipAddress"}
+    )
+})
+
 public class Feedback extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

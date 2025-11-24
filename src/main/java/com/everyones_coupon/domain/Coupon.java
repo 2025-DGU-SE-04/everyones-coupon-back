@@ -47,10 +47,10 @@ public class Coupon extends BaseTimeEntity {
     private double score;
 
     @Column(nullable = false)
-    private int likeCount;
+    private int validCount;
 
     @Column(nullable = false)
-    private int dislikeCount;
+    private int invalidCount;
 
     // --- 비즈니스 로직 ---
 
@@ -58,13 +58,13 @@ public class Coupon extends BaseTimeEntity {
         this.status = status;
     }
 
-    public void increaseLikeCount() {
-        this.likeCount++;
+    public void increaseValidCount() {
+        this.validCount++;
         updateScore();
     }
 
-    public void increaseDislikeCount() {
-        this.dislikeCount++;
+    public void increaseInvalidCount() {
+        this.invalidCount++;
         updateScore();
     }
 
@@ -72,9 +72,9 @@ public class Coupon extends BaseTimeEntity {
         // 간단한 신뢰도 점수 계산 로직 (예시)
         // like의 비율을 백분율로 환산
         // TODO: 지수가중이동평균으로 개선 필요
-        int total = likeCount + dislikeCount;
+        int total = validCount + invalidCount;
         if (total > 0) {
-            this.score = (double) likeCount / total * 100;
+            this.score = (double) validCount / total * 100;
         } else {
             this.score = 0;
         }
