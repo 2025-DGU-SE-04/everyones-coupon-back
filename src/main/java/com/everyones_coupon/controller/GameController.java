@@ -4,6 +4,7 @@ import com.everyones_coupon.domain.Game;
 import com.everyones_coupon.dto.GameCreateRequest;
 import com.everyones_coupon.service.GameService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,5 +36,12 @@ public class GameController {
     public ResponseEntity<List<Game>> searchGames(@RequestParam("keyword") String keyword) {
         List<Game> games = gameService.searchGames(keyword);
         return ResponseEntity.ok(games);
+    }
+
+    // 게임 조회 API (GET /api/games/{gameId})
+    @GetMapping("/{gameId}")
+    public ResponseEntity<Game> getGame(@PathVariable("gameId") Long  gameId) {
+        Game game = gameService.getGame(gameId);
+        return ResponseEntity.ok(game);
     }
 }

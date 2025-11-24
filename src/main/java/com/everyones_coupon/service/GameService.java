@@ -50,4 +50,15 @@ public class GameService {
     public List<Game> searchGames(String keyword) {
         return gameRepository.findByTitleContaining(keyword);
     }
+
+    /*
+    게임 조회
+    게임 Id에 해당하는 게임 하나 반환
+    */
+    @Transactional(readOnly = true)
+    public Game getGame(Long gameId) {
+        return gameRepository.findById(gameId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게임입니다."));
+    }
+
 }
