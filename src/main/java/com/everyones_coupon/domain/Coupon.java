@@ -68,6 +68,20 @@ public class Coupon extends BaseTimeEntity {
         updateScore();
     }
 
+    public void decreaseValidCount() {
+        if (this.validCount > 0) {
+            this.validCount--;
+            updateScore(); // 점수 재계산
+        }
+    }
+
+    public void decreaseInvalidCount() {
+        if (this.invalidCount > 0) {
+            this.invalidCount--;
+            updateScore(); // 점수 재계산
+        }
+    }
+
     private void updateScore() {
         // 간단한 신뢰도 점수 계산 로직 (예시)
         // like의 비율을 백분율로 환산

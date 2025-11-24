@@ -34,4 +34,8 @@ public class Feedback extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FeedbackStatusEnum status;
+
+    public void updateStatus(FeedbackStatusEnum status) {
+        this.status = status;
+    }
 }
