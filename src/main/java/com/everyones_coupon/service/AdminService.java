@@ -21,7 +21,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
-// java.nio.file imports not used after ImageStore abstraction
 import java.util.Base64;
 import java.util.UUID;
 import com.everyones_coupon.storage.ImageStore;
@@ -33,7 +32,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-// UNAUTHORIZED not currently used in this service
+ 
 
 @Service
 @RequiredArgsConstructor
