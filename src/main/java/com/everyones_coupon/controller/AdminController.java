@@ -43,8 +43,8 @@ public class AdminController {
 
     @DeleteMapping("/games/{gameId}")
     public ResponseEntity<?> deleteGame(@PathVariable Long gameId, @RequestHeader(value = "Authorization", required = false) String authorization,
-                                        @CookieValue(value = "ADMIN_TOKEN", required = false) String adminTokenCookie) {
-        String token = extractToken(authorization, adminTokenCookie);
+                                        @CookieValue(value = "ADMIN_SESSION", required = false) String adminSessionCookie) {
+        String token = extractToken(authorization, adminSessionCookie);
         adminService.validateAdminToken(token);
         adminService.deleteGame(gameId);
         return ResponseEntity.ok().build();
@@ -52,8 +52,8 @@ public class AdminController {
 
     @DeleteMapping("/coupons/{couponId}")
     public ResponseEntity<?> deleteCoupon(@PathVariable Long couponId, @RequestHeader(value = "Authorization", required = false) String authorization,
-                                           @CookieValue(value = "ADMIN_TOKEN", required = false) String adminTokenCookie) {
-        String token = extractToken(authorization, adminTokenCookie);
+                                           @CookieValue(value = "ADMIN_SESSION", required = false) String adminSessionCookie) {
+        String token = extractToken(authorization, adminSessionCookie);
         adminService.validateAdminToken(token);
         adminService.deleteCoupon(couponId);
         return ResponseEntity.ok().build();
@@ -62,8 +62,8 @@ public class AdminController {
     @PostMapping("/games/{gameId}/official")
     public ResponseEntity<?> setOfficial(@PathVariable Long gameId, @RequestBody OfficialRequest req,
                                          @RequestHeader(value = "Authorization", required = false) String authorization,
-                                         @CookieValue(value = "ADMIN_TOKEN", required = false) String adminTokenCookie) {
-        String token = extractToken(authorization, adminTokenCookie);
+                                         @CookieValue(value = "ADMIN_SESSION", required = false) String adminSessionCookie) {
+        String token = extractToken(authorization, adminSessionCookie);
         adminService.validateAdminToken(token);
         adminService.setOfficial(gameId, req.isOfficial());
         return ResponseEntity.ok().build();
@@ -72,11 +72,36 @@ public class AdminController {
     @PostMapping("/games/{gameId}/image")
     public ResponseEntity<?> uploadImage(@PathVariable Long gameId, @RequestBody ImageUploadRequest req,
                                          @RequestHeader(value = "Authorization", required = false) String authorization,
-                                         @CookieValue(value = "ADMIN_TOKEN", required = false) String adminTokenCookie) {
-        String token = extractToken(authorization, adminTokenCookie);
+                                         @CookieValue(value = "ADMIN_SESSION", required = false) String adminSessionCookie) {
+        String token = extractToken(authorization, adminSessionCookie);
         adminService.validateAdminToken(token);
         String url = adminService.uploadImage(gameId, req.getImageData());
         return ResponseEntity.ok(url);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader(value = "Authorization", required = false) String authorization,
+                                    @CookieValue(value = "ADMIN_SESSION", required = false) String adminSessionCookie,
+                                    HttpServletRequest request) {
+        // If bearer token present, invalidate sessions for that token
+        if (authorization != null && authorization.toLowerCase().startsWith("bearer ")) {
+            String token = authorization.substring(7);
+            adminService.invalidateSessionsForToken(token);
+        }
+        // If session cookie present, invalidate that session
+        if (adminSessionCookie != null) {
+            adminService.invalidateSession(adminSessionCookie);
+        }
+
+        boolean cookieSecure = cookieSecureByDefault || request.isSecure();
+        ResponseCookie cookie = ResponseCookie.from("ADMIN_SESSION", "")
+                .httpOnly(true)
+                .secure(cookieSecure)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
     }
 
     private String extractToken(String authorization, String cookieToken) {

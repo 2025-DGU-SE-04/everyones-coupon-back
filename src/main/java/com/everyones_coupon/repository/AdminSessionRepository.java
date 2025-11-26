@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface AdminSessionRepository extends JpaRepository<AdminSession, Long> {
     Optional<AdminSession> findBySessionId(String sessionId);
+    java.util.List<AdminSession> findByToken(String token);
+    void deleteByToken(String token);
 }

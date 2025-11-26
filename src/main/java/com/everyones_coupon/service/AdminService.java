@@ -78,6 +78,10 @@ public class AdminService {
         adminSessionRepository.findBySessionId(sessionId).ifPresent(adminSessionRepository::delete);
     }
 
+    public void invalidateSessionsForToken(String token) {
+        adminSessionRepository.deleteByToken(token);
+    }
+
     public void validateAdminToken(String token) {
         if (token == null || token.isBlank() || !adminTokenRepository.existsByToken(token)) {
             throw new ResponseStatusException(UNAUTHORIZED, "관리자 인증에 실패했습니다.");
