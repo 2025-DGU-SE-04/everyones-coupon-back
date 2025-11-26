@@ -26,6 +26,8 @@ import java.util.Base64;
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 // UNAUTHORIZED not currently used in this service
 
 @Service
@@ -71,7 +73,7 @@ public class AdminService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "게임을 찾을 수 없습니다."));
 
         if (base64Image == null || base64Image.isBlank()) {
-            throw new ResponseStatusException(NOT_FOUND, "이미지 데이터가 없습니다.");
+            throw new ResponseStatusException(BAD_REQUEST, "이미지 데이터가 없습니다.");
         }
 
         // decode base64
@@ -79,14 +81,14 @@ public class AdminService {
         try {
             bytes = Base64.getDecoder().decode(base64Image);
         } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(NOT_FOUND, "이미지 데이터가 올바른 Base64가 아닙니다.");
+            throw new ResponseStatusException(BAD_REQUEST, "이미지 데이터가 올바른 Base64가 아닙니다.");
         }
 
         // process image: read, resize if necessary, re-encode as JPEG with 75% quality
         try (ByteArrayInputStream in = new ByteArrayInputStream(bytes)) {
             BufferedImage inputImage = ImageIO.read(in);
             if (inputImage == null) {
-                throw new ResponseStatusException(NOT_FOUND, "이미지 데이터가 유효하지 않습니다.");
+                throw new ResponseStatusException(BAD_REQUEST, "이미지 데이터가 유효하지 않습니다.");
             }
 
             int maxSize = 1000;
@@ -126,7 +128,7 @@ public class AdminService {
             gameRepository.save(game);
             return url;
         } catch (IOException e) {
-            throw new ResponseStatusException(NOT_FOUND, "이미지 처리 중 오류 발생");
+            throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "이미지 처리 중 오류 발생");
         }
     }
 }
