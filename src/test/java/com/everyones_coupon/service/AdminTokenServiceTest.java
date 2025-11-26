@@ -9,6 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 // unused imports removed
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import org.mockito.ArgumentCaptor;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,6 +34,16 @@ class AdminTokenServiceTest {
         when(adminTokenRepository.existsByToken("abc")).thenReturn(false);
         String t = adminTokenService.createAdminToken("abc", "desc");
         assertThat(t).isEqualTo("abc");
+    }
+
+    @Test
+    void createAdminToken_saves_literal_token_as_provided() {
+        when(adminTokenRepository.existsByToken("  my-literal-token  ")).thenReturn(false);
+        ArgumentCaptor<com.everyones_coupon.domain.AdminToken> captor = ArgumentCaptor.forClass(com.everyones_coupon.domain.AdminToken.class);
+        String t = adminTokenService.createAdminToken("  my-literal-token  ", "desc");
+        assertThat(t).isEqualTo("  my-literal-token  ");
+        verify(adminTokenRepository).save(captor.capture());
+        assertThat(captor.getValue().getToken()).isEqualTo("  my-literal-token  ");
     }
 
     @Test
