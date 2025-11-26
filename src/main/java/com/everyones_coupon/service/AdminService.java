@@ -41,7 +41,7 @@ public class AdminService {
     private final CouponRepository couponRepository;
     private final ImageStore imageStore;
 
-    public boolean login(String token) {
+    public boolean isValidToken(String token) {
         if (token == null || token.isBlank()) return false;
         return adminTokenRepository.existsByToken(token);
     }

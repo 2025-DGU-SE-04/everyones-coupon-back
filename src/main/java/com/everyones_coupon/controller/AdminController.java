@@ -26,7 +26,7 @@ public class AdminController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AdminLoginRequest req, HttpServletRequest request) {
-        boolean ok = adminService.login(req.getToken());
+        boolean ok = adminService.isValidToken(req.getToken());
         if (!ok) throw new ResponseStatusException(org.springframework.http.HttpStatus.UNAUTHORIZED, "token invalid");
         // issue cookie
         boolean cookieSecure = cookieSecureByDefault || request.isSecure();
