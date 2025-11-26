@@ -85,3 +85,43 @@ erDiagram
     COUPONS ||--o{ FEEDBACKS : "receives (1:N)"
     ADMIN_TOKENS ||--o{ ADMIN_SESSIONS : "issues (1:N)"
 ```
+
+## 관리자 토큰(Magic Token) 설정
+
+- 이 애플리케이션은 관리자 전용 토큰(일명 매직 토큰, 비밀번호 역할)을 지원합니다.
+- 배포 시 리터럴 토큰을 DB에 저장하려면 `application.properties` 또는 환경변수로 `app.admin.init-token`을 설정하세요.
+    - 예: `app.admin.init-token=literal-token-123` 또는 env `APP_ADMIN_INIT_TOKEN=literal-token-123`
+- 자동 생성 옵션: `app.admin.auto-generate=true`를 설정하면 애플리케이션 시작 시 난수 토큰이 자동 생성되어 DB에 저장됩니다.
+    - 권장(안전): 자동 생성 후 토큰은 안전하게 저장(Secret Manager 또는 K8s Secret)하시고, 콘솔에 출력하지 마세요.
+- 기본 설명: `app.admin.init-description` 프로퍼티로 토큰 설명을 추가할 수 있습니다.
+
+예: Kubernetes 환경에서 Secret으로 지정하여 배포할 경우
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+    name: admin-token-secret
+type: Opaque
+data:
+    # base64 인코딩된 토큰
+    APP_ADMIN_INIT_TOKEN: "bGl0ZXJhbC10b2tlbi0xMjM="
+
+---
+apiVersion: apps/v1
+kind: Deployment
+spec:
+    template:
+        spec:
+            containers:
+            - name: everyones-coupon
+                image: your-image
+                env:
+                - name: APP_ADMIN_INIT_TOKEN
+                    valueFrom:
+                        secretKeyRef:
+                            name: admin-token-secret
+                            key: APP_ADMIN_INIT_TOKEN
+```
+
+보안 권고: 토큰 값은 민감 정보이므로 로그(콘솔)에 노출하면 안 되며, 배포 시에는 Secret Manager(K8s Secret, Vault 등)를 사용해 안전하게 관리하세요.
+
