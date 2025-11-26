@@ -25,6 +25,9 @@ import javax.imageio.stream.ImageOutputStream;
 import java.util.Base64;
 import java.util.UUID;
 import com.everyones_coupon.storage.ImageStore;
+import com.everyones_coupon.domain.AdminSession;
+import com.everyones_coupon.repository.AdminSessionRepository;
+import java.time.LocalDateTime;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -40,10 +43,40 @@ public class AdminService {
     private final GameRepository gameRepository;
     private final CouponRepository couponRepository;
     private final ImageStore imageStore;
+    private final AdminSessionRepository adminSessionRepository;
 
     public boolean isValidToken(String token) {
         if (token == null || token.isBlank()) return false;
         return adminTokenRepository.existsByToken(token);
+    }
+
+    public String createSessionForToken(String token) {
+        if (!isValidToken(token)) throw new ResponseStatusException(UNAUTHORIZED, "관리자 인증 실패");
+        String sessionId = UUID.randomUUID().toString();
+        LocalDateTime now = LocalDateTime.now();
+        AdminSession session = AdminSession.builder()
+                .sessionId(sessionId)
+                .token(token)
+                .createdAt(now)
+                .expiresAt(now.plusDays(1))
+                .build();
+        adminSessionRepository.save(session);
+        return sessionId;
+    }
+
+    public String getTokenForSession(String sessionId) {
+        if (sessionId == null || sessionId.isBlank()) throw new ResponseStatusException(UNAUTHORIZED, "관리자 세션 없음");
+        AdminSession session = adminSessionRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new ResponseStatusException(UNAUTHORIZED, "관리자 세션 유효하지 않음"));
+        if (session.isExpired()) {
+            adminSessionRepository.delete(session);
+            throw new ResponseStatusException(UNAUTHORIZED, "관리자 세션 만료");
+        }
+        return session.getToken();
+    }
+
+    public void invalidateSession(String sessionId) {
+        adminSessionRepository.findBySessionId(sessionId).ifPresent(adminSessionRepository::delete);
     }
 
     public void validateAdminToken(String token) {
