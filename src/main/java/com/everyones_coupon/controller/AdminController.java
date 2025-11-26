@@ -28,9 +28,10 @@ public class AdminController {
     public ResponseEntity<?> login(@RequestBody AdminLoginRequest req, HttpServletRequest request) {
         boolean ok = adminService.isValidToken(req.getToken());
         if (!ok) throw new ResponseStatusException(org.springframework.http.HttpStatus.UNAUTHORIZED, "token invalid");
-        // issue cookie
+        // create session (do not store admin token in cookie)
+        String sessionId = adminService.createSessionForToken(req.getToken());
         boolean cookieSecure = cookieSecureByDefault || request.isSecure();
-        ResponseCookie cookie = ResponseCookie.from("ADMIN_TOKEN", req.getToken())
+        ResponseCookie cookie = ResponseCookie.from("ADMIN_SESSION", sessionId)
             .httpOnly(true)
             .secure(cookieSecure)
             .path("/")
@@ -82,6 +83,8 @@ public class AdminController {
         if (authorization != null && authorization.toLowerCase().startsWith("bearer ")) {
             return authorization.substring(7);
         }
-        return cookieToken;
+        if (cookieToken == null) return null;
+        // cookieToken is a session id; map to admin token
+        return adminService.getTokenForSession(cookieToken);
     }
 }
