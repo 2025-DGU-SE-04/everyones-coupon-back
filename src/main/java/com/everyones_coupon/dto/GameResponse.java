@@ -10,7 +10,6 @@ public class GameResponse {
     private String gameImageUrl;    // 게임 이미지
     private int viewCount;          // 조회수
     private int couponCount;        // 현재 등록된 쿠폰 개수
-    private String category;
 
     // Entity -> DTO 변환 생성자
     public GameResponse(Game game) {
@@ -19,6 +18,5 @@ public class GameResponse {
         this.gameImageUrl = game.getGameImageUrl();
         this.viewCount = game.getViewCount();
         this.couponCount = game.getCouponCount();
-        this.category = game.getCategory();
     }
 }

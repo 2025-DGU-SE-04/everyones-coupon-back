@@ -28,7 +28,6 @@ erDiagram
         varchar title "게임 이름 (Not Null) [IDX]"
         text description "게임 설명 (Nullable)"
         varchar coupon_usage_link "쿠폰 사용처 링크 (Nullable)"
-        varchar category "장르/카테고리 (Nullable)"
         boolean is_official "공식 게임 여부 (Not Null)"
         varchar game_image_url "이미지/배너 URL (Nullable)"
         int coupon_count "쿠폰 수 (Not Null)"
