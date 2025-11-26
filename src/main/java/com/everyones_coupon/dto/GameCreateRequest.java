@@ -17,7 +17,6 @@ public class GameCreateRequest {
 
     private String couponUsageLink;  // 쿠폰 사용 링크
 
-    private String category;
 
     // DTO -> Entity 변환 메서드
     public Game toEntity() {
@@ -25,7 +24,6 @@ public class GameCreateRequest {
                 .title(this.title)
                 .gameDescription(this.gameDescription)
                 .couponUsageLink(this.couponUsageLink)
-                .category(this.category)
                 .viewCount(0)
                 .couponCount(0)
                 .official(false)
