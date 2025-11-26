@@ -24,6 +24,7 @@ import javax.imageio.stream.ImageOutputStream;
 // java.nio.file imports not used after ImageStore abstraction
 import java.util.Base64;
 import java.util.UUID;
+import com.everyones_coupon.storage.ImageStore;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -37,7 +38,7 @@ public class AdminService {
     private final AdminTokenRepository adminTokenRepository;
     private final GameRepository gameRepository;
     private final CouponRepository couponRepository;
-    private final com.everyones_coupon.storage.ImageStore imageStore;
+    private final ImageStore imageStore;
 
     public boolean login(String token) {
         if (token == null || token.isBlank()) return false;
