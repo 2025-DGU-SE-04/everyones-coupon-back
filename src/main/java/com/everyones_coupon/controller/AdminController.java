@@ -21,7 +21,7 @@ public class AdminController {
 
     private final AdminService adminService;
 
-    @Value("${app.cookie.secure:false}")
+    @Value("${app.cookie.secure:true}")
     private boolean cookieSecureByDefault;
 
     @PostMapping("/login")
