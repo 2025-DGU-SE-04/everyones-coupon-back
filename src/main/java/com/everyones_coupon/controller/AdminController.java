@@ -5,10 +5,12 @@ import com.everyones_coupon.dto.ImageUploadRequest;
 import com.everyones_coupon.dto.OfficialRequest;
 import com.everyones_coupon.service.AdminService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.server.ResponseStatusException;
 import java.time.Duration;
 
@@ -19,17 +21,22 @@ public class AdminController {
 
     private final AdminService adminService;
 
+    @Value("${app.cookie.secure:false}")
+    private boolean cookieSecureByDefault;
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AdminLoginRequest req) {
+    public ResponseEntity<?> login(@RequestBody AdminLoginRequest req, HttpServletRequest request) {
         boolean ok = adminService.login(req.getToken());
         if (!ok) throw new ResponseStatusException(org.springframework.http.HttpStatus.UNAUTHORIZED, "token invalid");
         // issue cookie
+        boolean cookieSecure = cookieSecureByDefault || request.isSecure();
         ResponseCookie cookie = ResponseCookie.from("ADMIN_TOKEN", req.getToken())
-                .httpOnly(true)
-                .path("/")
-                .maxAge(Duration.ofDays(1))
-                .sameSite("Lax")
-                .build();
+            .httpOnly(true)
+            .secure(cookieSecure)
+            .path("/")
+            .maxAge(Duration.ofDays(1))
+            .sameSite("Lax")
+            .build();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
     }
 
