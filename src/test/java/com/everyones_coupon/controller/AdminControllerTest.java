@@ -15,6 +15,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+// content matcher not used
 
 @ExtendWith(org.springframework.test.context.junit.jupiter.SpringExtension.class)
 @WebMvcTest(controllers = AdminController.class)
@@ -40,6 +41,22 @@ class AdminControllerTest {
                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content(json))
                 .andExpect(status().isOk())
-                .andExpect(header().exists(HttpHeaders.SET_COOKIE));
+                .andExpect(header().string(HttpHeaders.SET_COOKIE, org.hamcrest.Matchers.containsString("ADMIN_SESSION")))
+                .andExpect(header().string(HttpHeaders.SET_COOKIE, org.hamcrest.Matchers.containsString("HttpOnly")))
+                .andExpect(header().string(HttpHeaders.SET_COOKIE, org.hamcrest.Matchers.containsString("Secure")))
+                .andExpect(header().string(HttpHeaders.SET_COOKIE, org.hamcrest.Matchers.containsString("SameSite=Lax")));
     }
+
+        @Test
+        void endpoints_require_admin_token_or_session() throws Exception {
+        // adminService.validateAdminToken should throw UNAUTHORIZED on invalid token
+        org.mockito.Mockito.doThrow(new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.UNAUTHORIZED))
+            .when(adminService).validateAdminToken(org.mockito.ArgumentMatchers.any());
+
+        // make delete endpoint without token/session
+        mockMvc.perform(post("/api/admin/games/1/official")
+            .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+            .content("{\"official\":true}"))
+            .andExpect(status().isUnauthorized());
+        }
 }

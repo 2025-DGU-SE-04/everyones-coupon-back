@@ -21,6 +21,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
+import java.io.IOException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,6 +81,42 @@ class AdminServiceTest {
         assertThat(saved.getToken()).isEqualTo("t1");
         assertThat(saved.getSessionId()).isEqualTo(sessionId);
         assertThat(saved.getExpiresAt()).isAfter(saved.getCreatedAt());
+    }
+
+    @Test
+    void createSessionForToken_throws_whenInvalidToken() {
+        when(adminTokenRepository.existsByToken("bad-token")).thenReturn(false);
+        assertThatThrownBy(() -> adminService.createSessionForToken("bad-token")).isInstanceOf(ResponseStatusException.class);
+    }
+
+    @Test
+    void getTokenForSession_throws_whenNotFound() {
+        when(adminSessionRepository.findBySessionId("nope")).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> adminService.getTokenForSession("nope")).isInstanceOf(ResponseStatusException.class);
+    }
+
+    @Test
+    void uploadImage_throws_badRequest_whenBase64Invalid() {
+        when(gameRepository.findById(1L)).thenReturn(Optional.of(Game.builder().title("G").build()));
+        assertThatThrownBy(() -> adminService.uploadImage(1L, "not-base64"))
+                .isInstanceOf(ResponseStatusException.class);
+    }
+
+    @Test
+    void uploadImage_throws_internalServerError_whenImageStoreFails() throws Exception {
+        // prepare: Game in repo
+        Game game = Game.builder().title("G").build();
+        when(gameRepository.findById(1L)).thenReturn(Optional.of(game));
+
+        // create valid base64 image
+        BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(img, "png", baos);
+        String base64 = java.util.Base64.getEncoder().encodeToString(baos.toByteArray());
+
+        when(imageStore.saveImage(any(), any())).thenThrow(new IOException("disk full"));
+
+        assertThatThrownBy(() -> adminService.uploadImage(1L, base64)).isInstanceOf(ResponseStatusException.class);
     }
 
     @Test
