@@ -84,7 +84,7 @@ public class Coupon extends BaseTimeEntity {
 
     private void updateScore() {
         // 간단한 신뢰도 점수 계산 로직 (예시)
-        // like의 비율을 백분율로 환산
+        // valid의 비율을 백분율로 환산
         // TODO: 지수가중이동평균으로 개선 필요
         int total = validCount + invalidCount;
         if (total > 0) {

@@ -47,8 +47,8 @@ erDiagram
         datetime expiration_date "만료일 (Nullable)"
         enum status "VALID/INVALID/EXPIRED (Not Null)"
         double score "신뢰도 점수 (Not Null) [IDX]"
-        int like_count "좋아요 수 (Not Null)"
-        int dislike_count "싫어요 수 (Not Null)"
+        int valid_count "유효함 수 (Not Null)"
+        int invalid_count "유효하지 않음 수 (Not Null)"
         timestamp created_at "(Not Null) [IDX]"
         timestamp updated_at "(Not Null)"
     }
@@ -58,7 +58,7 @@ erDiagram
         bigint id PK
         bigint coupon_id FK "대상 쿠폰 ID (Not Null)"
         varchar ip_address "작성자 식별(IP) (Nullable)"
-        enum status "LIKE/DISLIKE (Not Null)"
+        enum status "VALID/INVALID (Not Null)"
         timestamp created_at "(Not Null)"
         timestamp updated_at "(Not Null)"
     }

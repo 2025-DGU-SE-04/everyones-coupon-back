@@ -23,7 +23,7 @@ class CouponTest {
 
     @Test
     @DisplayName("좋아요를 누르면 좋아요 수가 증가하고 점수가 갱신된다")
-    void increaseLikeCount() {
+    void increaseValidCount() {
         // given
         Coupon coupon = Coupon.builder()
                 .code("TEST-CODE")
@@ -40,7 +40,7 @@ class CouponTest {
 
     @Test
     @DisplayName("싫어요를 누르면 싫어요 수가 증가하고 점수가 갱신된다")
-    void increaseDislikeCount() {
+    void increaseInvalidCount() {
         // given
         Coupon coupon = Coupon.builder()
                 .code("TEST-CODE")
