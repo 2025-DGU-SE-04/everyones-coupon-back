@@ -71,7 +71,17 @@ erDiagram
         timestamp created_at "(Not Null)"
     }
 
+    %% 6. 관리자 세션 테이블 (Class: AdminSession) - 세션 기반 쿠키 저장
+    ADMIN_SESSIONS {
+        bigint id PK
+        varchar session_id "랜덤 세션 UUID (Not Null) [UK]"
+        varchar token FK "관리자 토큰 (AdminToken의 token) (Not Null)"
+        timestamp created_at "(Not Null)"
+        timestamp expires_at "(Not Null)"
+    }
+
     %% 관계 정의
     GAMES ||--o{ COUPONS : "contains (1:N)"
     COUPONS ||--o{ FEEDBACKS : "receives (1:N)"
+    ADMIN_TOKENS ||--o{ ADMIN_SESSIONS : "issues (1:N)"
 ```
