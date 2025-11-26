@@ -29,6 +29,7 @@ import com.everyones_coupon.storage.ImageStore;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 // UNAUTHORIZED not currently used in this service
 
 @Service
@@ -43,6 +44,12 @@ public class AdminService {
     public boolean login(String token) {
         if (token == null || token.isBlank()) return false;
         return adminTokenRepository.existsByToken(token);
+    }
+
+    public void validateAdminToken(String token) {
+        if (token == null || token.isBlank() || !adminTokenRepository.existsByToken(token)) {
+            throw new ResponseStatusException(UNAUTHORIZED, "관리자 인증에 실패했습니다.");
+        }
     }
 
     @Transactional
