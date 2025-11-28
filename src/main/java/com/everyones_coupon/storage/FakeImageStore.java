@@ -1,8 +1,6 @@
 package com.everyones_coupon.storage;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -11,12 +9,15 @@ import java.util.UUID;
  * 개발/테스트용 Fake 이미지 저장소 구현체입니다.
  * 이미지 바이트는 실제 저장하지 않고 버리며, UUID 기반의 그럴싸한 URL 문자열을 반환합니다.
  */
-@Component
-@Primary
 public class FakeImageStore implements ImageStore {
 
-    @Value("${app.image.fake-baseurl:/uploads}")
     private String baseUrl = "/uploads";
+
+    public FakeImageStore() {}
+
+    public FakeImageStore(String baseUrl) {
+        if (baseUrl != null && !baseUrl.isBlank()) this.baseUrl = baseUrl;
+    }
 
     @Override
     public String saveImage(byte[] imageBytes, String filename) throws IOException {
