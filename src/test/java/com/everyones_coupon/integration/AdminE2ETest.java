@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.http.*;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestTemplate;
@@ -19,8 +20,10 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("integration")
 @TestPropertySource(properties = {"app.admin.auto-generate:false"})
-public class AdminE2ETest {
+public class AdminE2ETest extends IntegrationTestBase {
+    
 
 // Using TestRestTemplate with random port; port not required in this test
 
