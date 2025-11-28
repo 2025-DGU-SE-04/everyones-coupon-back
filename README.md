@@ -125,3 +125,23 @@ spec:
 
 보안 권고: 토큰 값은 민감 정보이므로 로그(콘솔)에 노출하면 안 되며, 배포 시에는 Secret Manager(K8s Secret, Vault 등)를 사용해 안전하게 관리하세요.
 
+## 이미지 저장(Image Store) 동작 안내
+
+- 현재 기본 `ImageStore` 구현은 `FakeImageStore`로 설정되어 있으며, 이미지 바이트를 실제로 저장하지 않고 가짜 URL을 반환합니다.
+    - 반환되는 URL 형식은 기본적으로 `/uploads/{uuid}-{filename}` 처럼 보이며, 개발/테스트에서 편의성을 제공하기 위한 것입니다.
+    - 이 동작은 `ImageStoreConfig`에서 기본 빈으로 등록되어 있기 때문에, 프로덕션에서는 대체 구현(예: `AzureBlobImageStore`, `S3ImageStore`, `LocalImageStore`)을 빈으로 등록해 사용하시길 권장합니다.
+
+- 운영(프로덕션) 환경으로 전환 시 권장 사항:
+    - **프로덕션**에서는 실제로 이미지를 저장하는 구현체(Azure Blob, S3, 또는 파일 스토리지)를 등록하세요.
+    - 예시: `AzureBlobImageStore`를 추가하고 `@Profile("prod")`로 등록하거나, `ImageStoreConfig`에서 프로퍼티나 프로파일을 통해 교체하도록 구성하세요.
+
+- 프론트엔드 처리 권장사항:
+    - Game 엔티티의 `gameImageUrl`이 `null`이거나 빈 문자열인 경우, 프론트엔드에서는 정적 기본 이미지를 표시하도록 처리하세요(예: `/static/default-game-image.png`).
+    - FakeImageStore는 개발/테스트용이며 실제 이미지를 제공하지 않기 때문에, 배포 시 기본 이미지 노출 로직을 반드시 확인하세요.
+
+예시(프로덕션에서 Azure Blob 사용):
+1. `AzureBlobImageStore` 구현체 추가
+2. `@Profile("prod")`로 빈 등록하거나 `ImageStoreConfig`에서 `@ConditionalOnProperty`로 설정
+3. 프로덕션 환경에서 S3/Azure 자격증명과 Container 정보를 설정
+
+
