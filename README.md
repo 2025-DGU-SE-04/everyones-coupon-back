@@ -125,6 +125,16 @@ spec:
 
 보안 권고: 토큰 값은 민감 정보이므로 로그(콘솔)에 노출하면 안 되며, 배포 시에는 Secret Manager(K8s Secret, Vault 등)를 사용해 안전하게 관리하세요.
 
+## Swagger / OpenAPI (간단)
+
+- 애플리케이션 실행 후 접근 가능한 경로 (기본값):
+    - Swagger UI (브라우저 UI): `http://<HOST>:<PORT>/swagger-ui/index.html` 또는 `http://<HOST>:<PORT>/swagger-ui.html`
+    - OpenAPI JSON: `http://<HOST>:<PORT>/v3/api-docs`
+    - (참고) API docs의 기본 경로는 Springdoc 설정에 따라 다를 수 있습니다.
+
+- 인증 관련 안내: 관리자용 API는 인증(Authorization header 또는 세션 쿠키)을 요구하므로, 스웨거에서 엔드포인트를 테스트할 때는 Authorization 헤더(Bearer 토큰)를 직접 설정하거나, 로그인을 통해 `ADMIN_SESSION` 쿠키를 발급 받아 사용하세요.
+
+
 ## 이미지 저장(Image Store) 동작 안내
 
 - 현재 기본 `ImageStore` 구현은 `FakeImageStore`로 설정되어 있으며, 이미지 바이트를 실제로 저장하지 않고 가짜 URL을 반환합니다.
