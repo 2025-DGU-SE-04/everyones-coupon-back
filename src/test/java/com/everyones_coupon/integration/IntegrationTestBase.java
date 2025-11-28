@@ -11,7 +11,8 @@ import org.springframework.test.context.DynamicPropertySource;
 public abstract class IntegrationTestBase {
 
     // Using Testcontainers' org.testcontainers.containers.PostgreSQLContainer
-    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:15.4")
+    // Use PostgreSQL 17 for the integration tests
+    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:17")
             .withDatabaseName("everyones_coupon_test")
             .withUsername("test")
             .withPassword("test");
