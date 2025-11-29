@@ -17,8 +17,8 @@ class CouponTest {
                 .build();
 
         assertThat(coupon.getScore()).isEqualTo(0.0);
-        assertThat(coupon.getLikeCount()).isEqualTo(0);
-        assertThat(coupon.getDislikeCount()).isEqualTo(0);
+        assertThat(coupon.getValidCount()).isEqualTo(0);
+        assertThat(coupon.getInvalidCount()).isEqualTo(0);
     }
 
     @Test
@@ -31,10 +31,10 @@ class CouponTest {
                 .build();
 
         // when
-        coupon.increaseLikeCount(); // 좋아요 1, 싫어요 0 -> 점수 100점
+        coupon.increaseValidCount(); // 좋아요 1, 싫어요 0 -> 점수 100점
 
         // then
-        assertThat(coupon.getLikeCount()).isEqualTo(1);
+        assertThat(coupon.getValidCount()).isEqualTo(1);
         assertThat(coupon.getScore()).isEqualTo(100.0);
     }
 
@@ -48,11 +48,11 @@ class CouponTest {
                 .build();
 
         // when
-        coupon.increaseLikeCount();    // 좋아요 1 (100점)
-        coupon.increaseDislikeCount(); // 싫어요 1 (총 2개 중 좋아요 1개 -> 50점)
+        coupon.increaseValidCount();    // 좋아요 1 (100점)
+        coupon.increaseInvalidCount(); // 싫어요 1 (총 2개 중 좋아요 1개 -> 50점)
 
         // then
-        assertThat(coupon.getDislikeCount()).isEqualTo(1);
+        assertThat(coupon.getInvalidCount()).isEqualTo(1);
         assertThat(coupon.getScore()).isEqualTo(50.0);
     }
 }
