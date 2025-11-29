@@ -28,7 +28,6 @@ erDiagram
         varchar title "게임 이름 (Not Null) [IDX]"
         text description "게임 설명 (Nullable)"
         varchar coupon_usage_link "쿠폰 사용처 링크 (Nullable)"
-        varchar category "장르/카테고리 (Nullable)"
         boolean is_official "공식 게임 여부 (Not Null)"
         varchar game_image_url "이미지/배너 URL (Nullable)"
         int coupon_count "쿠폰 수 (Not Null)"
@@ -47,8 +46,8 @@ erDiagram
         datetime expiration_date "만료일 (Nullable)"
         enum status "VALID/INVALID/EXPIRED (Not Null)"
         double score "신뢰도 점수 (Not Null) [IDX]"
-        int like_count "좋아요 수 (Not Null)"
-        int dislike_count "싫어요 수 (Not Null)"
+        int valid_count "유효함 수 (Not Null)"
+        int invalid_count "유효하지 않음 수 (Not Null)"
         timestamp created_at "(Not Null) [IDX]"
         timestamp updated_at "(Not Null)"
     }
@@ -58,7 +57,7 @@ erDiagram
         bigint id PK
         bigint coupon_id FK "대상 쿠폰 ID (Not Null)"
         varchar ip_address "작성자 식별(IP) (Nullable)"
-        enum status "LIKE/DISLIKE (Not Null)"
+        enum status "VALID/INVALID (Not Null)"
         timestamp created_at "(Not Null)"
         timestamp updated_at "(Not Null)"
     }

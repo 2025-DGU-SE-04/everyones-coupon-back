@@ -26,9 +26,6 @@ public class Game extends BaseTimeEntity {
     @Column(nullable = true)
     private String couponUsageLink;
 
-    @Column(nullable = true)
-    private String category;
-
     @Column(nullable = false)
     private boolean official;
 

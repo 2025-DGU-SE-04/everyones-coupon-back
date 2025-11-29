@@ -30,13 +30,13 @@ jobs:
 
       - name: Build with Gradle
         working-directory: '${{ github.workspace }}'
-        run: ./gradlew clean bootJar
+        run: ./gradlew clean build --info
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: build/libs/*.jar
+          path: build/libs/app.jar
 
   deploy:
     runs-on: ubuntu-latest
@@ -65,7 +65,7 @@ jobs:
         with:
           app-name: 'everyones-coupon-webapp'
           slot-name: 'Production'
-          package: ./java-app
+          package: ./java-app/app.jar
 
           
 
