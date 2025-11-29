@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: build/libs/*.jar
+          path: build/libs/app.jar
 
   deploy:
     runs-on: ubuntu-latest
@@ -65,7 +65,7 @@ jobs:
         with:
           app-name: 'everyones-coupon-webapp'
           slot-name: 'Production'
-          package: ./java-app
+          package: ./java-app/app.jar
 
           
 
