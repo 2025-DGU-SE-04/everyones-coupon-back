@@ -55,3 +55,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// Don't create a plain jar when building the Spring Boot fat jar
+tasks.named('jar') {
+    enabled = false
+}
