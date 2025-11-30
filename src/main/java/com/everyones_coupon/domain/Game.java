@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 @Table(name = "games", indexes = {
     @Index(name = "idx_game_title", columnList = "title"),
-    @Index(name = "idx_game_view_count", columnList = "viewCount")
+    @Index(name = "idx_game_official_view", columnList = "official DESC, viewCount DESC")
 })
 public class Game extends BaseTimeEntity {
 

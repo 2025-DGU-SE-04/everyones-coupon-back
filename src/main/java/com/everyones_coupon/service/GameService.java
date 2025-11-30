@@ -2,12 +2,14 @@ package com.everyones_coupon.service;
 
 import com.everyones_coupon.domain.Game;
 import com.everyones_coupon.dto.GameCreateRequest;
+import com.everyones_coupon.dto.GameResponse;
 import com.everyones_coupon.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,10 +40,11 @@ public class GameService {
     조회수가 높은 순서대로 상위 10개 반환 
     */
     @Transactional(readOnly = true)
-    public List<Game> getTrendingGames() {
-        return gameRepository.findTop10ByOrderByViewCountDesc();
+    public List<GameResponse> getTrendingGames() {
+        return gameRepository.findTop10ByOrderByOfficialDescViewCountDesc().stream()
+                .map(GameResponse::new)
+                .collect(Collectors.toList());
     }
-    
     /*
     게임 검색 기능
     검색어가 포함된 게임 목록 반환

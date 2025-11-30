@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface GameRepository extends JpaRepository<Game, Long> {
 
     // 메인 화면: '요즘 뜨는 게임' (조회수 내림차순으로 상위 10개 가져오기)
-    List<Game> findTop10ByOrderByViewCountDesc();
+    List<Game> findTop10ByOrderByOfficialDescViewCountDesc();
 
     // 검색 화면: 게임 이름 검색
     List<Game> findByTitleContaining(String keyword);
