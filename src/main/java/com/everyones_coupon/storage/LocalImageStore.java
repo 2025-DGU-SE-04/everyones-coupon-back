@@ -1,19 +1,24 @@
 package com.everyones_coupon.storage;
 
-import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-@Component
 public class LocalImageStore implements ImageStore {
 
-    private final Path uploadsDir = Paths.get("uploads");
+    private final Path uploadsDir;
+    private final String baseUrl;
 
+    // Default constructor for compatibility (defaults to uploads and /uploads)
     public LocalImageStore() throws IOException {
+        this("uploads", "/uploads");
+    }
+
+    public LocalImageStore(String uploadDir, String baseUrl) throws IOException {
+        this.uploadsDir = Paths.get(uploadDir);
+        this.baseUrl = baseUrl == null ? "/uploads" : baseUrl;
         if (!Files.exists(uploadsDir)) Files.createDirectories(uploadsDir);
     }
 
@@ -24,6 +29,7 @@ public class LocalImageStore implements ImageStore {
         }
         Path out = uploadsDir.resolve(filename);
         Files.write(out, imageBytes);
-        return "/uploads/" + filename;
+        String trimmed = baseUrl.replaceAll("/+$", "");
+        return trimmed + "/" + filename;
     }
 }
