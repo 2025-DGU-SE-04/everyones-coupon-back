@@ -49,10 +49,13 @@ class CouponTest {
 
         // when
         coupon.increaseValidCount();    // 좋아요 1 (100점)
-        coupon.increaseInvalidCount(); // 싫어요 1 (총 2개 중 좋아요 1개 -> 50점)
+        coupon.increaseInvalidCount(); // 싫어요 1
+        // 지수가중이동평균(ALPHA=0.3)에 의해
+        // (100*(1-0.3) + 0+0.3)=100*0.7 + 0=70.0
+        // TODO: 추후 float 정확도 오류가 날 수 있으므로, isEqualTo가 아닌 다른 방법 권장
 
         // then
         assertThat(coupon.getInvalidCount()).isEqualTo(1);
-        assertThat(coupon.getScore()).isEqualTo(50.0);
+        assertThat(coupon.getScore()).isEqualTo(70.0);
     }
 }
