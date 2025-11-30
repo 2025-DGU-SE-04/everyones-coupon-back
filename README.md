@@ -149,7 +149,7 @@ spec:
     - Game 엔티티의 `gameImageUrl`이 `null`이거나 빈 문자열인 경우, 프론트엔드에서는 정적 기본 이미지를 표시하도록 처리하세요(예: `/static/default-game-image.png`).
         - FakeImageStore는 개발/테스트용이며 실제 이미지를 제공하지 않기 때문에, 배포 시 기본 이미지 노출 로직을 반드시 확인하세요.
         - `LocalImageStore` 관련 설정:
-            - `app.image.upload-dir`(APP_IMAGE_UPLOAD_DIR): 로컬에 저장할 디렉터리를 지정합니다 (기본값: `uploads`).
+            - `app.image.upload-dir`(APP_IMAGE_UPLOAD_DIR): 로컬에 저장할 디렉터리를 지정합니다 (기본값: `uploads`). Azure Web App Service에 배포할 때는 반드시 `/home/site/wwwroot/uploads`로 설정하세요. registry.addResourceHandler(handler).addResourceLocations("file:uploads/")가 작동하지 않았습니다. "file:/home/site/wwwroot/uploads/"같은 절대 경로로 시도하세요.
             - `app.image.base-host`(APP_IMAGE_BASE_HOST): 이미지 URL의 호스트(스킴 포함)를 지정합니다 (예: `http://localhost:8080`, `https://cdn.example.com`).
             - `app.image.base-path`(APP_IMAGE_BASE_PATH): 이미지가 서빙되는 경로(서버상의 path)를 지정합니다 (예: `/uploads`). 이 값은 Spring의 ResourceHandler에 사용됩니다. `http://localhost:8080/uploads/{filename}` 형태의 URL이 생성됩니다.
 
