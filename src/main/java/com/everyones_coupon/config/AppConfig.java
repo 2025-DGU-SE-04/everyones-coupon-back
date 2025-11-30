@@ -20,6 +20,12 @@ public class AppConfig implements WebMvcConfigurer {
     @Value("${app.cors.allowed-origins:http://localhost:3000,https://zealous-sand-04c7aae00.3.azurestaticapps.net}")
     private String allowedOriginsProp;
 
+    @Value("${app.image.upload-dir:uploads}")
+    private String uploadDir;
+
+    @Value("${app.image.base-url:/uploads}")
+    private String imageBaseUrl;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         List<String> origins = Arrays.stream(allowedOriginsProp.split(","))
@@ -34,5 +40,13 @@ public class AppConfig implements WebMvcConfigurer {
                 .allowedOrigins(origins.toArray(String[]::new))
                 .allowedMethods("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true);
+    }
+
+    @Override
+    public void addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
+        String trimmed = imageBaseUrl.replaceAll("/+$", "");
+        String handler = trimmed + "/**";
+        String location = "file:" + uploadDir + "/"; // local directory
+        registry.addResourceHandler(handler).addResourceLocations(location);
     }
 }
