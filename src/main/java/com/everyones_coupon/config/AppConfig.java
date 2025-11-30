@@ -26,9 +26,12 @@ public class AppConfig implements WebMvcConfigurer {
             .map(String::trim)
             .filter(s -> !s.isEmpty())
             .collect(Collectors.toCollection(ArrayList::new));
+        // origins.add("http://localhost:3000");
+        // 여기에 추가 허용 출처를 넣을 수 있습니다.
+        // ArrayList를 활용하세요.
 
         registry.addMapping("/**")
-                .allowedOrigins(origins.toArray(new String[0]))
+                .allowedOrigins(origins.toArray(String[]::new))
                 .allowedMethods("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true);
     }
