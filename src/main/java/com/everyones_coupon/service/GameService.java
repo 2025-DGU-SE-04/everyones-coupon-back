@@ -40,9 +40,8 @@ public class GameService {
     조회수가 높은 순서대로 상위 10개 반환 
     */
     @Transactional(readOnly = true)
-    public List<GameResponse> getTrendingGames() {
+    public List<Game> getTrendingGames() {
         return gameRepository.findTop10ByOrderByOfficialDescViewCountDesc().stream()
-                .map(GameResponse::new)
                 .collect(Collectors.toList());
     }
     /*
