@@ -50,7 +50,8 @@ public class GameService {
     */
     @Transactional(readOnly = true)
     public List<Game> searchGames(String keyword) {
-        return gameRepository.findByTitleContaining(keyword);
+        return gameRepository.findByTitleContainingOrderByOfficialDescViewCountDesc(keyword).stream()
+                .collect(Collectors.toList());
     }
 
     /*

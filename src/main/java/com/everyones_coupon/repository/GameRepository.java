@@ -11,7 +11,7 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     List<Game> findTop10ByOrderByOfficialDescViewCountDesc();
 
     // 검색 화면: 게임 이름 검색
-    List<Game> findByTitleContaining(String keyword);
+    List<Game> findByTitleContainingOrderByOfficialDescViewCountDesc(String keyword);
 
     // 게임 추가 시: 이름 중복 검사
     boolean existsByTitle(String title);
