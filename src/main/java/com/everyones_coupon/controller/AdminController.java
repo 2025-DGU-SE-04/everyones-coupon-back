@@ -36,7 +36,7 @@ public class AdminController {
             .secure(cookieSecure)
             .path("/")
             .maxAge(Duration.ofDays(1))
-            .sameSite("Lax")
+            .sameSite("None")
             .build();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
     }
@@ -99,7 +99,7 @@ public class AdminController {
                 .secure(cookieSecure)
                 .path("/")
                 .maxAge(0)
-                .sameSite("Lax")
+                .sameSite("None")
                 .build();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
     }
