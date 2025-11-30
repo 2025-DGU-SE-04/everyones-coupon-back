@@ -52,7 +52,7 @@ public class Coupon extends BaseTimeEntity {
     @Column(nullable = false)
     private int invalidCount;
 
-    // --- 비즈니스 로직 ---
+    private static final double ALPHA = 0.3;
 
     public void updateStatus(CouponStatusEnum status) {
         this.status = status;
@@ -60,37 +60,34 @@ public class Coupon extends BaseTimeEntity {
 
     public void increaseValidCount() {
         this.validCount++;
-        updateScore();
+        updateScore(100.0);
     }
 
     public void increaseInvalidCount() {
         this.invalidCount++;
-        updateScore();
+        updateScore(0.0);
     }
 
     public void decreaseValidCount() {
         if (this.validCount > 0) {
             this.validCount--;
-            updateScore(); // 점수 재계산
         }
     }
 
     public void decreaseInvalidCount() {
         if (this.invalidCount > 0) {
             this.invalidCount--;
-            updateScore(); // 점수 재계산
         }
     }
 
-    private void updateScore() {
-        // 간단한 신뢰도 점수 계산 로직 (예시)
-        // valid의 비율을 백분율로 환산
-        // TODO: 지수가중이동평균으로 개선 필요
+    private void updateScore(double newSample) {
         int total = validCount + invalidCount;
-        if (total > 0) {
-            this.score = (double) validCount / total * 100;
+
+        if (total == 1) {
+            // 첫 투표라면 평균을 낼 과거 데이터가 없으므로 입력값 그대로 설정
+            this.score = newSample;
         } else {
-            this.score = 0;
+            this.score = (ALPHA * newSample) + ((1.0 - ALPHA) * this.score);
         }
     }
 }
