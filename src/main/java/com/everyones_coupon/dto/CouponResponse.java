@@ -2,7 +2,9 @@ package com.everyones_coupon.dto;
 
 import com.everyones_coupon.domain.Coupon;
 import com.everyones_coupon.domain.CouponStatusEnum;
+import com.everyones_coupon.domain.Feedback;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.everyones_coupon.domain.FeedbackStatusEnum;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -23,6 +25,7 @@ public class CouponResponse {
     private String dDay;            // [계산 필드] D-Day (예: "D-5", "만료됨")
 
     private CouponStatusEnum status;// 상태 (VALID, INVALID, EXPIRED)
+    private FeedbackStatusEnum myVote;
     
     private double score;           // 신뢰도 점수
     private int validCount;          // 유효함 수
@@ -31,7 +34,7 @@ public class CouponResponse {
     private LocalDateTime createdAt; // 등록일 (최신순 정렬용)
 
     // Entity -> DTO 변환 생성자 (여기서 UI 로직 처리)
-    public CouponResponse(Coupon coupon) {
+    public CouponResponse(Coupon coupon, FeedbackStatusEnum myVote) {
         this.id = coupon.getId();
         this.code = coupon.getCode();
         this.reward = coupon.getReward();
@@ -45,6 +48,8 @@ public class CouponResponse {
 
         // D-Day 계산 로직
         this.dDay = calculateDDay(coupon.getExpirationDate());
+
+        this.myVote = myVote;
     }
 
     private String calculateDDay(LocalDateTime expirationDate) {

@@ -52,19 +52,31 @@ public class CouponService {
      특정 게임의 쿠폰 목록 조회
      */
     @Transactional(readOnly = true)
-    public Page<CouponResponse> getCouponsByGame(Long gameId, Pageable pageable) {
+    public Page<CouponResponse> getCouponsByGame(Long gameId, Pageable pageable, String ipAddress) {
         Page<Coupon> coupons = couponRepository.findByGameId(gameId, pageable);
         // Entity -> DTO 변환
-        return coupons.map(CouponResponse::new);
+        return coupons.map(coupon -> {
+            FeedbackStatusEnum myVote = getMyVoteStatus(coupon.getId(), ipAddress);
+            return new CouponResponse(coupon, myVote);
+        });
+    }
+
+    private FeedbackStatusEnum getMyVoteStatus(Long couponId, String ipAddress) {
+        return feedbackRepository.findByCouponIdAndIpAddress(couponId, ipAddress)
+                .map(feedback -> feedback.getStatus()) // 투표 했으면 상태(VALID/INVALID) 반환
+                .orElse(null); // 투표 안 했으면 null 반환
     }
 
     /*
      Score가 높은 상위 10개 쿠폰 조회
      */
     @Transactional(readOnly = true)
-    public List<CouponResponse> getTopCoupons(Long gameId) {
+    public List<CouponResponse> getTopCoupons(Long gameId, String ipAddress) {
         return couponRepository.findTop10ByGameIdOrderByScoreDesc(gameId).stream()
-                .map(CouponResponse::new)
+                .map(coupon -> {
+                    FeedbackStatusEnum myVote = getMyVoteStatus(coupon.getId(), ipAddress);
+                    return new CouponResponse(coupon, myVote);
+                })
                 .collect(Collectors.toList());
     }
     
