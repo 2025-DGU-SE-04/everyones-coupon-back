@@ -23,8 +23,11 @@ public class AppConfig implements WebMvcConfigurer {
     @Value("${app.image.upload-dir:uploads}")
     private String uploadDir;
 
-    @Value("${app.image.base-url:/uploads}")
-    private String imageBaseUrl;
+
+    // Optional: a path-only property for resource handler (e.g. '/uploads').
+    // If not set, we'll try to parse the path from `imageBaseUrl`.
+    @Value("${app.image.base-path:}")
+    private String imageBasePathProp;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -44,7 +47,14 @@ public class AppConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
-        String trimmed = imageBaseUrl.replaceAll("/+$", "");
+        String path;
+        if (imageBasePathProp != null && !imageBasePathProp.isBlank()) {
+            path = imageBasePathProp;
+        } else {
+            // fallback: use default path
+            path = "/uploads";
+        }
+        String trimmed = path.replaceAll("/+$", "");
         String handler = trimmed + "/**";
         String location = "file:" + uploadDir + "/"; // local directory
         registry.addResourceHandler(handler).addResourceLocations(location);

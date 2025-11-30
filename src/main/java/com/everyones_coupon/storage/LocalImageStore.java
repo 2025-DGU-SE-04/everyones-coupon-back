@@ -10,6 +10,7 @@ public class LocalImageStore implements ImageStore {
 
     private final Path uploadsDir;
     private final String baseUrl;
+    public String getBaseUrl() { return baseUrl; }
 
     // Default constructor for compatibility (defaults to uploads and /uploads)
     public LocalImageStore() throws IOException {
@@ -18,7 +19,7 @@ public class LocalImageStore implements ImageStore {
 
     public LocalImageStore(String uploadDir, String baseUrl) throws IOException {
         this.uploadsDir = Paths.get(uploadDir);
-        this.baseUrl = baseUrl == null ? "/uploads" : baseUrl;
+        this.baseUrl = (baseUrl == null || baseUrl.isBlank()) ? "/uploads" : baseUrl;
         if (!Files.exists(uploadsDir)) Files.createDirectories(uploadsDir);
     }
 

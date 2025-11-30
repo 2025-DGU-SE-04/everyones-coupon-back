@@ -150,7 +150,8 @@ spec:
         - FakeImageStore는 개발/테스트용이며 실제 이미지를 제공하지 않기 때문에, 배포 시 기본 이미지 노출 로직을 반드시 확인하세요.
         - `LocalImageStore` 관련 설정:
             - `app.image.upload-dir`: 로컬에 저장할 디렉터리를 지정합니다 (기본값: `uploads`).
-            - `app.image.base-url`: 저장된 이미지에 대한 공개 URL의 기본 접두어를 지정합니다 (기본값: `/uploads`).
+            - `app.image.base-host`: 이미지 URL의 호스트(스킴 포함)를 지정합니다 (예: `http://localhost:8080`, `https://cdn.example.com`).
+            - `app.image.base-path`: 이미지가 서빙되는 경로(서버상의 path)를 지정합니다 (예: `/uploads`). 이 값은 Spring의 ResourceHandler에 사용됩니다. `http://localhost:8080/uploads/{filename}` 형태의 URL이 생성됩니다.
 
 예시(프로덕션에서 Azure Blob 사용):
 1. `AzureBlobImageStore` 구현체 추가

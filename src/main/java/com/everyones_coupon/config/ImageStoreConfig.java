@@ -14,8 +14,19 @@ public class ImageStoreConfig {
     @Bean
     @Primary
     public ImageStore localImageStore(@Value("${app.image.upload-dir:uploads}") String uploadDir,
-                                      @Value("${app.image.base-url:/uploads}") String baseUrl) throws Exception {
-        return new LocalImageStore(uploadDir, baseUrl);
+                                      @Value("${app.image.base-host:}") String baseHost,
+                                      @Value("${app.image.base-path:/uploads}") String basePath) throws Exception {
+        String finalBaseUrl;
+        // Prefer explicit host + path if provided
+        if (baseHost != null && !baseHost.isBlank()) {
+            String host = baseHost.replaceAll("/+$", "");
+            String path = (basePath == null || basePath.isBlank()) ? "/uploads" : basePath;
+            if (!path.startsWith("/")) path = "/" + path;
+            finalBaseUrl = host + path;
+        } else {
+            finalBaseUrl = basePath == null || basePath.isBlank() ? "/uploads" : basePath;
+        }
+        return new LocalImageStore(uploadDir, finalBaseUrl);
     }
 
     @Bean
