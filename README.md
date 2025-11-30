@@ -137,9 +137,9 @@ spec:
 
 ## 이미지 저장(Image Store) 동작 안내
 
-- 현재 기본 `ImageStore` 구현은 `FakeImageStore`로 설정되어 있으며, 이미지 바이트를 실제로 저장하지 않고 가짜 URL을 반환합니다.
-    - 반환되는 URL 형식은 기본적으로 `/uploads/{uuid}-{filename}` 처럼 보이며, 개발/테스트에서 편의성을 제공하기 위한 것입니다.
-    - 이 동작은 `ImageStoreConfig`에서 기본 빈으로 등록되어 있기 때문에, 프로덕션에서는 대체 구현(예: `AzureBlobImageStore`, `S3ImageStore`, `LocalImageStore`)을 빈으로 등록해 사용하시길 권장합니다.
+- 현재 기본 `ImageStore` 구현은 `LocalImageStore`로 설정되어 있으며, 애플리케이션 루트의 `uploads` 디렉터리에 이미지를 저장합니다. 반환되는 URL은 기본적으로 `/uploads/{filename}` 형식입니다.
+    - 반환되는 URL 형식은 기본적으로 `/uploads/{filename}` 처럼 보이며, 로컬 파일 시스템에 저장된 이미지를 서빙하도록 구성되어 있습니다.
+    - 이 동작은 `ImageStoreConfig`에서 `LocalImageStore`를 기본(`@Primary`) 빈으로 등록하여 적용됩니다. 개발/로컬 실행 환경에서 편리하게 이미지가 파일 시스템에 저장되며, 필요 시 `FakeImageStore`나 클라우드 스토리지 구현으로 교체할 수 있습니다.
 
 - 운영(프로덕션) 환경으로 전환 시 권장 사항:
     - **프로덕션**에서는 실제로 이미지를 저장하는 구현체(Azure Blob, S3, 또는 파일 스토리지)를 등록하세요.
@@ -147,7 +147,11 @@ spec:
 
 - 프론트엔드 처리 권장사항:
     - Game 엔티티의 `gameImageUrl`이 `null`이거나 빈 문자열인 경우, 프론트엔드에서는 정적 기본 이미지를 표시하도록 처리하세요(예: `/static/default-game-image.png`).
-    - FakeImageStore는 개발/테스트용이며 실제 이미지를 제공하지 않기 때문에, 배포 시 기본 이미지 노출 로직을 반드시 확인하세요.
+        - FakeImageStore는 개발/테스트용이며 실제 이미지를 제공하지 않기 때문에, 배포 시 기본 이미지 노출 로직을 반드시 확인하세요.
+        - `LocalImageStore` 관련 설정:
+            - `app.image.upload-dir`: 로컬에 저장할 디렉터리를 지정합니다 (기본값: `uploads`).
+            - `app.image.base-host`: 이미지 URL의 호스트(스킴 포함)를 지정합니다 (예: `http://localhost:8080`, `https://cdn.example.com`).
+            - `app.image.base-path`: 이미지가 서빙되는 경로(서버상의 path)를 지정합니다 (예: `/uploads`). 이 값은 Spring의 ResourceHandler에 사용됩니다. `http://localhost:8080/uploads/{filename}` 형태의 URL이 생성됩니다.
 
 예시(프로덕션에서 Azure Blob 사용):
 1. `AzureBlobImageStore` 구현체 추가

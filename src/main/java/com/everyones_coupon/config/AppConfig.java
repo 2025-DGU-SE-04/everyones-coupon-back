@@ -20,6 +20,15 @@ public class AppConfig implements WebMvcConfigurer {
     @Value("${app.cors.allowed-origins:http://localhost:3000,https://zealous-sand-04c7aae00.3.azurestaticapps.net}")
     private String allowedOriginsProp;
 
+    @Value("${app.image.upload-dir:uploads}")
+    private String uploadDir;
+
+
+    // Optional: a path-only property for resource handler (e.g. '/uploads').
+    // If not set, we'll try to parse the path from `imageBaseUrl`.
+    @Value("${app.image.base-path:}")
+    private String imageBasePathProp;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         List<String> origins = Arrays.stream(allowedOriginsProp.split(","))
@@ -34,5 +43,20 @@ public class AppConfig implements WebMvcConfigurer {
                 .allowedOrigins(origins.toArray(String[]::new))
                 .allowedMethods("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true);
+    }
+
+    @Override
+    public void addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
+        String path;
+        if (imageBasePathProp != null && !imageBasePathProp.isBlank()) {
+            path = imageBasePathProp;
+        } else {
+            // fallback: use default path
+            path = "/uploads";
+        }
+        String trimmed = path.replaceAll("/+$", "");
+        String handler = trimmed + "/**";
+        String location = "file:" + uploadDir + "/"; // local directory
+        registry.addResourceHandler(handler).addResourceLocations(location);
     }
 }
