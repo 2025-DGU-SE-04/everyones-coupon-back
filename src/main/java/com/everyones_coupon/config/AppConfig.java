@@ -26,7 +26,7 @@ public class AppConfig implements WebMvcConfigurer {
 
     // Optional: a path-only property for resource handler (e.g. '/uploads').
     // If not set, we'll try to parse the path from `imageBaseUrl`.
-    @Value("${app.image.base-path:}")
+    @Value("${app.image.base-path:/uploads}")
     private String imageBasePathProp;
 
     @Override
