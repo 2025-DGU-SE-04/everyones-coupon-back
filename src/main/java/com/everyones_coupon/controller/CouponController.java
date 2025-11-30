@@ -45,7 +45,7 @@ public class CouponController {
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, HttpServletRequest request) {
                 
         String clientIp = getClientIp(request);
-        Page<CouponResponse> coupons = couponService.getCouponsByGame(gameId, pageable);
+        Page<CouponResponse> coupons = couponService.getCouponsByGame(gameId, pageable, clientIp);
         return ResponseEntity.ok(coupons);
     }
 
@@ -58,7 +58,7 @@ public class CouponController {
             @RequestParam("gameId") Long gameId, HttpServletRequest request) {
         
         String clientIp = getClientIp(request);
-        List<CouponResponse> topCoupons = couponService.getTopCoupons(gameId);
+        List<CouponResponse> topCoupons = couponService.getTopCoupons(gameId, clientIp);
         return ResponseEntity.ok(topCoupons);
     }
 
