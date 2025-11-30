@@ -55,10 +55,16 @@ public class GameService {
     게임 조회
     게임 Id에 해당하는 게임 하나 반환
     */
-    @Transactional(readOnly = true)
+    @Transactional
     public Game getGame(Long gameId) {
-        return gameRepository.findById(gameId)
+
+        Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게임입니다."));
+
+        // 조회수 증가
+        game.increaseViewCount();
+
+        return game;
     }
 
 }
