@@ -2,6 +2,7 @@ package com.everyones_coupon.controller;
 
 import com.everyones_coupon.dto.CouponCreateRequest;
 import com.everyones_coupon.dto.CouponResponse;
+import com.everyones_coupon.dto.VoteResponse;
 import com.everyones_coupon.service.CouponService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -67,15 +68,15 @@ public class CouponController {
      * POST /api/coupons/{couponId}/vote?isWorking=true
      */
     @PostMapping("/{couponId}/vote")
-    public ResponseEntity<Void> voteCoupon(
+    public ResponseEntity<VoteResponse> voteCoupon(
             @PathVariable("couponId") Long couponId,
             @RequestParam("isWorking") boolean isWorking,
-            HttpServletRequest request) { // IP 추출을 위해 request 객체 필요
+            HttpServletRequest request) {
         
         String ipAddress = getClientIp(request);
-        couponService.voteCoupon(couponId, isWorking, ipAddress);
+        VoteResponse response = couponService.voteCoupon(couponId, isWorking, ipAddress);
         
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(response);
     }
 
     // --- Utility Method: IP 추출 ---

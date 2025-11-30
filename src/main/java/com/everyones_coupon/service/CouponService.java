@@ -6,6 +6,7 @@ import com.everyones_coupon.domain.FeedbackStatusEnum;
 import com.everyones_coupon.domain.Game;
 import com.everyones_coupon.dto.CouponCreateRequest;
 import com.everyones_coupon.dto.CouponResponse;
+import com.everyones_coupon.dto.VoteResponse;
 import com.everyones_coupon.repository.CouponRepository;
 import com.everyones_coupon.repository.FeedbackRepository;
 import com.everyones_coupon.repository.GameRepository;
@@ -84,55 +85,53 @@ public class CouponService {
      유효성 투표
      */
     @Transactional
-    public void voteCoupon(Long couponId, boolean isWorking, String ipAddress) {
+    public VoteResponse voteCoupon(Long couponId, boolean isWorking, String ipAddress) {
         // 쿠폰 조회
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 쿠폰입니다."));
 
-        // 사용자의 기존 투표 내역 조회
+        // 기존 투표 내역 조회
         Optional<Feedback> existingFeedback = feedbackRepository.findByCouponIdAndIpAddress(couponId, ipAddress);
-
-        FeedbackStatusEnum newStatus = isWorking ? FeedbackStatusEnum.VALID : FeedbackStatusEnum.INVALID;
+        FeedbackStatusEnum targetStatus = isWorking ? FeedbackStatusEnum.VALID : FeedbackStatusEnum.INVALID;
+        FeedbackStatusEnum finalStatus;
 
         if (existingFeedback.isPresent()) {
-            // 이미 투표한 이력이 있는 경우 -> 수정 로직
             Feedback feedback = existingFeedback.get();
 
-            // 기존 상태와 다를 경우에만 처리
-            if (feedback.getStatus() != newStatus) {
-                // 기존 투표 취소
-                if (feedback.getStatus() == FeedbackStatusEnum.VALID) {
-                    coupon.decreaseValidCount();
-                } else {
-                    coupon.decreaseInvalidCount();
-                }
+            if (feedback.getStatus() == targetStatus) {
+                if (targetStatus == FeedbackStatusEnum.VALID) coupon.decreaseValidCount();
+                else coupon.decreaseInvalidCount();
+                
+                feedbackRepository.delete(feedback);
+                finalStatus = null;
 
-                // 새로운 투표 반영
-                if (newStatus == FeedbackStatusEnum.VALID) {
-                    coupon.increaseValidCount();
-                } else {
-                    coupon.increaseInvalidCount();
-                }
-
-                // 피드백 상태 업데이트
-                feedback.updateStatus(newStatus);
-            }
-
-        } else {
-            // 첫 투표인 경우 -> 생성 로직
-            if (newStatus == FeedbackStatusEnum.VALID) {
-                coupon.increaseValidCount();
             } else {
-                coupon.increaseInvalidCount();
+                if (feedback.getStatus() == FeedbackStatusEnum.VALID) coupon.decreaseValidCount();
+                else coupon.decreaseInvalidCount();
+
+                if (targetStatus == FeedbackStatusEnum.VALID) coupon.increaseValidCount();
+                else coupon.increaseInvalidCount();
+
+                feedback.updateStatus(targetStatus);
+                finalStatus = targetStatus;
             }
+        } else {
+            if (targetStatus == FeedbackStatusEnum.VALID) coupon.increaseValidCount();
+            else coupon.increaseInvalidCount();
 
             Feedback feedback = Feedback.builder()
                     .coupon(coupon)
                     .ipAddress(ipAddress)
-                    .status(newStatus)
+                    .status(targetStatus)
                     .build();
-
             feedbackRepository.save(feedback);
+            finalStatus = targetStatus;
         }
+
+        return new VoteResponse(
+                finalStatus,
+                coupon.getValidCount(),
+                coupon.getInvalidCount()
+        );
     }
 }
