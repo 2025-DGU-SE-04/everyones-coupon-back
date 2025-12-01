@@ -6,6 +6,56 @@
 - **Spring Boot**: 3.5.7
 - **Gradle**: 8.14.3 (Groovy DSL)
 
+## 실행 방법
+기본적으로 프로젝트는 **JDK 17** 및 Gradle Wrapper(`gradlew`)로 실행합니다.
+
+### 1) 개발 서버 실행 (PowerShell / Windows)
+
+```powershell
+# 프로젝트 루트에서
+# 개발용 애플리케이션 실행
+.\gradlew.bat bootRun
+```
+
+유닉스(Mac / Linux) 또는 WSL 사용자:
+```bash
+./gradlew bootRun
+```
+
+### 2) 빌드 및 실행 (JAR 생성)
+
+```powershell
+.\gradlew.bat clean build
+# 생성된 JAR 실행 (버전에 따라 파일명이 다름. 지금은 배포를 위한 app.jar)
+java -jar build\libs\*.jar
+```
+
+### 3) 테스트 실행
+
+```powershell
+.\gradlew.bat test
+```
+
+### 4) 환경변수 및 프로퍼티 (예시)
+
+관리자 초기 토큰을 수동으로 넣고 실행하려면 (PowerShell):
+```powershell
+#$env:APP_ADMIN_INIT_TOKEN = "literal-token-123"
+.\gradlew.bat bootRun
+```
+
+Unix 계열(간단 예):
+```bash
+APP_ADMIN_INIT_TOKEN=literal-token-123 ./gradlew bootRun
+```
+
+기타 유용한 설정 예:
+- `app.admin.auto-generate=true` : 실행 시 난수 관리자 토큰 자동 생성
+- `app.admin.init-description` : 토큰 설명(예: "Master admin token")
+- 이미지 업로드 관련: `app.image.upload-dir`, `app.image.base-host`, `app.image.base-path`
+
+참고: 실행 시 민감한 토큰 값은 환경변수나 Secret Manager를 통해 관리하세요. 콘솔에 노출하지 않도록 주의합니다.
+
 ## 데이터베이스 ERD
 > **참고**: Mermaid 문법이 `NOT NULL`, `INDEX` 등의 제약조건을 완벽하게 지원하지 않아, 컬럼 설명란에 다음과 같이 명시했습니다.
 > - `(Not Null)` / `(Nullable)`: Null 허용 여부
@@ -85,6 +135,15 @@ erDiagram
     COUPONS ||--o{ FEEDBACKS : "receives (1:N)"
     ADMIN_TOKENS ||--o{ ADMIN_SESSIONS : "issues (1:N)"
 ```
+## 주요 기능 로직
+
+1. 게임 정렬 : 오피셜(Official) > 조회수(ViewCount) 순으로 정렬하기 위해 games 테이블에 복합 인덱스가 적용되어 있습니다.
+
+2. 중복 투표 방지: feedbacks 테이블은 (coupon_id, ip_address) 조합에 유니크 제약조건이 걸려 있어, 동일 IP의 중복 투표를 DB 레벨에서 차단합니다.
+
+3. 신뢰도 점수 (EWMA): 쿠폰 상태 변경 시 지수가중이동평균 알고리즘을 통해 최신 투표에 더 높은 가중치를 부여합니다.
+
+4. 투표 상태 관리: 사용자가 동일한 투표를 재시도하면 취소 처리하며, 다른 상태로 변경 시 기존 내역을 수정하여 점수를 보정합니다. 또한 API 응답 시 myVote 필드를 통해 사용자별 투표 상태를 실시간으로 동기화합니다.
 
 ## 관리자 토큰(Magic Token) 설정
 
