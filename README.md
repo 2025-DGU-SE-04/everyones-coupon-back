@@ -6,6 +6,56 @@
 - **Spring Boot**: 3.5.7
 - **Gradle**: 8.14.3 (Groovy DSL)
 
+## 실행 방법
+기본적으로 프로젝트는 **JDK 17** 및 Gradle Wrapper(`gradlew`)로 실행합니다.
+
+### 1) 개발 서버 실행 (PowerShell / Windows)
+
+```powershell
+# 프로젝트 루트에서
+# 개발용 애플리케이션 실행
+.\gradlew.bat bootRun
+```
+
+유닉스(Mac / Linux) 또는 WSL 사용자:
+```bash
+./gradlew bootRun
+```
+
+### 2) 빌드 및 실행 (JAR 생성)
+
+```powershell
+.\gradlew.bat clean build
+# 생성된 JAR 실행 (버전에 따라 파일명이 다름. 지금은 배포를 위한 app.jar)
+java -jar build\libs\*.jar
+```
+
+### 3) 테스트 실행
+
+```powershell
+.\gradlew.bat test
+```
+
+### 4) 환경변수 및 프로퍼티 (예시)
+
+관리자 초기 토큰을 수동으로 넣고 실행하려면 (PowerShell):
+```powershell
+#$env:APP_ADMIN_INIT_TOKEN = "literal-token-123"
+.\gradlew.bat bootRun
+```
+
+Unix 계열(간단 예):
+```bash
+APP_ADMIN_INIT_TOKEN=literal-token-123 ./gradlew bootRun
+```
+
+기타 유용한 설정 예:
+- `app.admin.auto-generate=true` : 실행 시 난수 관리자 토큰 자동 생성
+- `app.admin.init-description` : 토큰 설명(예: "Master admin token")
+- 이미지 업로드 관련: `app.image.upload-dir`, `app.image.base-host`, `app.image.base-path`
+
+참고: 실행 시 민감한 토큰 값은 환경변수나 Secret Manager를 통해 관리하세요. 콘솔에 노출하지 않도록 주의합니다.
+
 ## 데이터베이스 ERD
 > **참고**: Mermaid 문법이 `NOT NULL`, `INDEX` 등의 제약조건을 완벽하게 지원하지 않아, 컬럼 설명란에 다음과 같이 명시했습니다.
 > - `(Not Null)` / `(Nullable)`: Null 허용 여부
