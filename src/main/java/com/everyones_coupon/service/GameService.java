@@ -6,6 +6,7 @@ import com.everyones_coupon.dto.GameResponse;
 import com.everyones_coupon.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -70,4 +71,12 @@ public class GameService {
         return game;
     }
 
+    /*
+    전체 게임 조회
+    */
+    @Transactional(readOnly = true)
+    public List<Game> getAllGames() {
+        // 생성일(createdAt) 기준 내림차순(DESC) 정렬 -> 최신 게임이 맨 위에 뜸
+        return gameRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+    }
 }

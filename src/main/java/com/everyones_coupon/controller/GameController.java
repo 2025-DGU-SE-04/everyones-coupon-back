@@ -44,4 +44,11 @@ public class GameController {
         Game game = gameService.getGame(gameId);
         return ResponseEntity.ok(game);
     }
+
+    // 전체 게임 조회 (GET /api/games)
+    @GetMapping
+    public ResponseEntity<List<Game>> getAllGames() {
+        List<Game> games = gameService.getAllGames();
+        return ResponseEntity.ok(games);
+    }
 }
