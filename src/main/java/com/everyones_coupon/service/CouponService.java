@@ -12,10 +12,12 @@ import com.everyones_coupon.repository.FeedbackRepository;
 import com.everyones_coupon.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
@@ -27,6 +29,9 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final GameRepository gameRepository;
     private final FeedbackRepository feedbackRepository;
+
+    // 유효성 커트라인 (이 점수보다 낮으면 목록에서 숨김)
+    private static final double MIN_SCORE_THRESHOLD = -10.0;
 
     @Transactional
     public Long addCoupon(Long gameId, CouponCreateRequest request) {
@@ -54,7 +59,8 @@ public class CouponService {
      */
     @Transactional(readOnly = true)
     public Page<CouponResponse> getCouponsByGame(Long gameId, Pageable pageable, String ipAddress) {
-        Page<Coupon> coupons = couponRepository.findByGameId(gameId, pageable);
+        LocalDateTime now = LocalDateTime.now();
+        Page<Coupon> coupons = couponRepository.findActiveCoupons(gameId, now, MIN_SCORE_THRESHOLD, pageable);
         // Entity -> DTO 변환
         return coupons.map(coupon -> {
             FeedbackStatusEnum myVote = getMyVoteStatus(coupon.getId(), ipAddress);
@@ -73,7 +79,12 @@ public class CouponService {
      */
     @Transactional(readOnly = true)
     public List<CouponResponse> getTopCoupons(Long gameId, String ipAddress) {
-        return couponRepository.findTop10ByGameIdOrderByScoreDesc(gameId).stream()
+        LocalDateTime now = LocalDateTime.now();
+        
+        Pageable limitTen = PageRequest.of(0, 10);
+        List<Coupon> topCoupons = couponRepository.findTop10ActiveCoupons(gameId, now, limitTen);
+
+        return topCoupons.stream()
                 .map(coupon -> {
                     FeedbackStatusEnum myVote = getMyVoteStatus(coupon.getId(), ipAddress);
                     return new CouponResponse(coupon, myVote);

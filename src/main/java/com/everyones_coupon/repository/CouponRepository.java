@@ -5,7 +5,10 @@ import com.everyones_coupon.domain.CouponStatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
@@ -22,6 +25,24 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     // 특정 게임의 쿠폰을 점수순(신뢰도순)으로 상위 N개 조회
     List<Coupon> findTop10ByGameIdOrderByScoreDesc(Long gameId);
 
+    @Query("SELECT c FROM Coupon c " +
+           "WHERE c.game.id = :gameId " +
+           "AND (c.expirationDate IS NULL OR c.expirationDate > :now) " +
+           "AND c.score >= :minScore")
+    Page<Coupon> findActiveCoupons(@Param("gameId") Long gameId, 
+                                   @Param("now") LocalDateTime now, 
+                                   @Param("minScore") double minScore, 
+                                   Pageable pageable);
+
+    // 상위 쿠폰 조회도 마찬가지로 필터링 적용
+    @Query("SELECT c FROM Coupon c " +
+           "WHERE c.game.id = :gameId " +
+           "AND (c.expirationDate IS NULL OR c.expirationDate > :now) " +
+           "ORDER BY c.score DESC")
+    List<Coupon> findTop10ActiveCoupons(@Param("gameId") Long gameId, 
+                                        @Param("now") LocalDateTime now, 
+                                        Pageable pageable);
+                                        
     // 쿠폰 코드로 조회 (중복 검사 등)
     boolean existsByCode(String code);
 }
